@@ -129,11 +129,11 @@ function init() {
 	ctlLayerSwitcher.maximizeControl();
 
 	map.setCenter(
-		new OpenLayers.LonLat(4.79, 52.39).transform(
+		new OpenLayers.LonLat(4.635, 52.38).transform(
 		new OpenLayers.Projection("EPSG:4326"),
 		map.getProjectionObject()
 		),
-	14
+	  15
 	);
 
 }
