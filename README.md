@@ -1,4 +1,4 @@
-Archeo-Peilbuizen-PoC
+Sparql-Mapviewer by Bureau Digitaal Erfgoed
 =====================
     Simple web mapping application for visualising well-known text encoded geometries from sparql endpoints. Although it has default
     queries as standard, it accepts a different sparql endpoint, and a different query as input parameter in the URL. It was created
