@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>GeoSPARQL example page</title>
+	<title>Sparql-Mapviewer</title>
 	<link rel="stylesheet" href="./theme/default/style.css" type="text/css">
 	<link rel="stylesheet" href="./style.css" type="text/css">
 	<link rel="stylesheet" href="./jquery-ui-1.10.3/themes/base/jquery.ui.all.css">
@@ -28,8 +28,6 @@
 		'use strict';
 		var selectControl, selectedFeature, popup, feature, map, osm, viewportGeometry;
 		var datasources = {};
-		OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
-		OpenLayers.Util.onImageLoadErrorColor = "transparent";
 
 		function init() {
 			'use strict';
@@ -60,7 +58,7 @@
 						numDigits: 2
 					}),
 					new OpenLayers.Control.PanZoom(),
-					new OpenLayers.Control.Navigation({'zoomWheelEnabled': false})
+					new OpenLayers.Control.Navigation({'zoomWheelEnabled': true})
 				],
 				projection: new OpenLayers.Projection("EPSG:3857"),
 				displayProjection: new OpenLayers.Projection("EPSG:4326") //Is used for displaying coordinates in appropriate CRS by MousePosition control			
@@ -70,7 +68,7 @@
 			osm = new OpenLayers.Layer.OSM("Simple OSM Map");
 
 			//Default viewport bounds for initial OpenLayers map
-			viewportGeometry = "POLYGON((4.884409868450121 52.12151706264289,5.1389836904715676 52.12151706264289,5.1389836904715676 52.18471110614036,4.884409868450121 52.18471110614036,4.884409868450121 52.12151706264289))";
+			//viewportGeometry = "POLYGON((4.884409868450121 52.12151706264289,5.1389836904715676 52.12151706264289,5.1389836904715676 52.18471110614036,4.884409868450121 52.18471110614036,4.884409868450121 52.12151706264289))";
 
 			//GeoJSON vector layer for archaeological monuments data set
 			datasources["monuments"] = {
@@ -285,29 +283,6 @@
 
 			map.addControls([selector, ctlLayerSwitcher]);
 			ctlLayerSwitcher.maximizeControl();
-
-			map.events.on({
-				"moveend": function () {
-					//update result for each layer
-					viewportGeometry = map.getExtent().transform(map.projection, map.displayProjection).toGeometry().toString()
-					//This is pretty ugly, rewrite to nice function
-					datasources["monuments"].query = 'PREFIX geof:<http://www.opengis.net/def/function/geosparql/\> \r\nPREFIX geo:<http://www.opengis.net/ont/geosparql#> \r\nPREFIX d2r-vocab:<http://erfgeo.nl/d2r/d2r-vocab/\> \r\nSELECT DISTINCT * WHERE {\r\n?URI d2r-vocab:archeologisch_monument_monumentnr ?Monumentnummer; \r\ngeo:hasGeometry ?geometrie . \r\n?geometrie geo:asWKT ?WKT . \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_code ?code} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_provincie ?provincie} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_gemeente ?gemeente} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_plaats ?plaats} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_toponiem ?toponiem} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_kaartblad ?kaartblad} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_x_coord ?xcoordinaatRD} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_y_coord ?ycoordinaatRD} \r\nOPTIONAL {?URI d2r-vocab:archeologisch_monument_waarde ?waarde} . \r\nFILTER (geof:sfIntersects(?WKT, "' + viewportGeometry + '"^^geo:wktLiteral))\r\n} LIMIT 1000';
-
-					$('#monuments-sparql-query').val(datasources["monuments"].query);
-					zoomSPARQL(map.getExtent().transform(map.projection, map.displayProjection).toGeometry().toString(), datasources["monuments"]);
-					//This section is pretty ugly, rewrite to nice function
-					datasources["monitoring_wells"].query = 'PREFIX geof:<http://www.opengis.net/def/function/geosparql/\> PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX wgs84:<http://www.w3.org/2003/01/geo/wgs84_pos#> PREFIX pb:<http://peilbuizen.nl/\> SELECT DISTINCT * WHERE { ?Peilbuis pb:OBJECTID ?ID; geo:asWKT ?WKT . OPTIONAL {?Peilbuis pb:FILTERS_RE ?RE_filter} OPTIONAL {?Peilbuis pb:FILTERS_PU ?PU_filter} OPTIONAL {?Peilbuis pb:FILTERS_ME ?ME_filter} OPTIONAL {?Peilbuis pb:FILTERS_WV ?WV_filter} OPTIONAL {?Peilbuis pb:FILTERS_1 ?1_filter} OPTIONAL {?Peilbuis pb:PUTTEN_SIT ?Locatie} OPTIONAL {?Peilbuis pb:PUTTEN_MAA ?NAP_hoogte} OPTIONAL {?Peilbuis pb:Topfilter ?Topfilter} OPTIONAL {?Peilbuis pb:Bodfilter ?Bodemfilter} OPTIONAL {?Peilbuis pb:Status ?Status} OPTIONAL {?Peilbuis pb:XCOOR ?RD_x_coordinaat} OPTIONAL {?Peilbuis pb:YCOOR ?RD_y_coordinaat} OPTIONAL {?Peilbuis pb:OPMERKING ?Opmerking} OPTIONAL {?Peilbuis wgs84:lon ?WGS84_x_coordinaat} OPTIONAL {?Peilbuis wgs84:lat ?WGS84_y_coordinaat} OPTIONAL {?Peilbuis pb:testhoogtedelta ?Hoogteverschil_dummy} FILTER (geof:sfIntersects(?WKT, "' + viewportGeometry + '"^^geo:wktLiteral))} LIMIT 1000';
-
-					$('#monitoring-wells-sparql-query').val(datasources["monitoring_wells"].query);
-					zoomSPARQL(map.getExtent().transform(map.projection, map.displayProjection).toGeometry().toString(), datasources["monitoring_wells"]);
-					datasources["monitoring_wells_near_monuments"].query = 'PREFIX uom:<http://www.opengis.net/def/uom/OGC/1.0/\> \r\nPREFIX pb:<http://peilbuizen.nl/\> \r\nPREFIX geof:<http://www.opengis.net/def/function/geosparql/\> \r\nPREFIX geo:<http://www.opengis.net/ont/geosparql#\> \r\nPREFIX d2r-vocab:<http://erfgeo.nl/d2r/d2r-vocab/\> \r\nSELECT DISTINCT ?Peilbuis ?Linestring ?Distance ?Monumentnummer WHERE {\r\n?URI d2r-vocab:archeologisch_monument_monumentnr ?Monumentnummer; geo:hasGeometry ?geometrie . ?geometrie geo:asWKT ?mWKT . ?Peilbuis pb:OBJECTID ?ID; geo:asWKT ?pWKT . BIND (concat("LINESTRING", strafter(strbefore(str(?mWKT), " "), "(("), " ", strafter(strbefore(str(?mWKT), ","), " "),  ",", strafter(strbefore(str(?pWKT), " "), "("), " ", strafter(strbefore(str(?pWKT), ")"), " "), ")" ) AS ?Linestring) FILTER (geof:sfIntersects(?mWKT, "' + viewportGeometry + '"^^geo:wktLiteral)) FILTER (geof:sfIntersects(?pWKT, "' + viewportGeometry + '"^^geo:wktLiteral)) BIND (geof:distance(?mWKT, ?pWKT, uom:metre) AS ?Distance) FILTER (?Distance < 1000)} LIMIT 100';
-
-					$('#monitoring-wells-near-monuments-sparql-query').val(datasources["monitoring_wells_near_monuments"].query);
-					zoomSPARQL(map.getExtent().transform(map.projection, map.displayProjection).toGeometry().toString(), datasources["monitoring_wells_near_monuments"]);
-
-					document.getElementById('resultstotal').innerHTML = "Loading search results, this may take a while...";
-				}
-			});
 
 			map.setCenter(
 				new OpenLayers.LonLat(4.79, 52.39).transform(
