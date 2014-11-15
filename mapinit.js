@@ -1,3 +1,4 @@
+/*jshint es3: false, jquery: true*/
 var datasources = {};
 var feature;
 // QueryString IIFS function assignes parameters to QueryString var
