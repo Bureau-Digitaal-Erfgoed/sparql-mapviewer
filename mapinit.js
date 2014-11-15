@@ -1,5 +1,4 @@
-/*jshint es3: false, jquery: true*/
-var datasources = {};
+/*jshint es3: false, maxerr: 10000, jquery: true*/
 var feature;
 // QueryString IIFS function assignes parameters to QueryString var
 // Thanks to http://stackoverflow.com/questions/979975/how-to-get-the-value-from-url-parameter
@@ -61,7 +60,9 @@ function init() {
 	//OpenStreetMap base layer
 	var osm = new OpenLayers.Layer.OSM("Simple OSM Map");
 
-	//GeoJSON vector layer for sparql query data set
+    var datasources = {};
+
+	//Config object for GeoJSON vector layer - sparql query data set
 	datasources["sparql-query"] = {
 		layer: "", //OpenLayers layer name
 		query: "", //Query
@@ -136,7 +137,6 @@ function init() {
 		),
 	  15
 	);
-
 }
 
 //function for custom query execution, here is still some work to do, refactor analogous to function zoomSPARQL
@@ -157,7 +157,7 @@ function executeSPARQL(query) {
 		},
 		success: function(response) {
 			d = new Date();
-			alert((d.getTime() - timer)/1000 + " seconds for result set to return");
+			console.log((d.getTime() - timer)/1000 + " seconds for result set to return");
 			displayData(response, datasources["sparql-query"]);
 		},
 		error: displayError
@@ -224,14 +224,6 @@ var displayData = function(data, source) {
 		internalProjection: new OpenLayers.Projection("EPSG:3857"),
 		externalProjection: new OpenLayers.Projection("EPSG:4326")
 	});
-
-	/*populate header
-	var header = $('#monuments-table-result thead').insertRow(0);
-	$.each(data.head.vars, function (key, value) {
-			var cell = header.insertCell(0);
-		cell.innerHTML= "<b>" + value + "</b>";
-	});
-	*/
 
 	source.layer.addFeatures(geojson_format.read(geojson));
 };
