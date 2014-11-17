@@ -17,7 +17,7 @@ Create View microstation_cesspits As
         ?structuurtype = plainLiteral(?structuurtype)
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
     From
-        [[SELECT "Haarlem_putten".*, ST_AsText(ST_transform(the_geom, 4326)) As geometry FROM "Haarlem_putten" WHERE Haarlem_putten.structuurtype='Cesspit';]]
+        [[SELECT "Haarlem_putten".*, ST_AsText(ST_transform(the_geom, 4326)) As geometry FROM "Haarlem_putten" WHERE "Haarlem_putten".structuurtype='Beerput';]]
 
 Create View cadastral_parcels As
     Construct {
