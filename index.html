@@ -44,7 +44,9 @@
 			<div id="accordion1" style="width:100%;float:left;">
 				<h3>SPARQL query:</h3>
 				<div><textarea style="height:100px;width:100%" id="sparql-query-text"></textarea></textarea>
-				<button onclick="executeSPARQL($('#sparql-query-text').val());">Execute query</button></div>
+				<button onclick="executeSPARQL($('#sparql-endpoint').val(), $('#sparql-query-text').val());">Execute query</button></div>
+                <h3>SPARQL endpoint</h3>
+                <textarea style="height:100px;width:100%" id="sparql-endpoint">http://bureaudigitaalerfgoed.nl/sparql</textarea>
 				<h3>Result MIME application/sparql-result+json</h3>
 				<textarea style="height:100px;width:100%" id="sparql-results-json-result"></textarea>
 				<h3>Result GeoJSON</h3>

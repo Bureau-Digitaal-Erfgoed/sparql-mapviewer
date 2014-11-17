@@ -31,7 +31,6 @@ var QueryString = function () {
 var datasources = {};
 datasources["sparql-query"] = {
     layer: "", //OpenLayers layer name
-    endpoint: QueryString.endpoint || "http://bureaudigitaalerfgoed.nl/sparql",
     queryElementId: "sparql-query-text",
     JSONResultElementId: "sparql-results-json-result",
     GeoJSONResultElementId: "geojson-result"
@@ -39,6 +38,9 @@ datasources["sparql-query"] = {
 
 if (QueryString.query) { datasources["sparql-query"].query = decodeURIComponent(QueryString.query); }
 else { datasources["sparql-query"].query = "SELECT DISTINCT * WHERE { ?Subject <http://www.opengis.net/ont/geosparql#asWKT> ?wkt } LIMIT 5000"; }
+
+if (QueryString.endpoint) { datasources["sparql-query"].endpoint = decodeURIComponent(QueryString.endpoint); }
+else { datasources["sparql-query"].endpoint = "http://bureaudigitaalerfgoed.nl/sparql"; }
 
 function init() {
 	'use strict';
@@ -142,17 +144,17 @@ function init() {
         15
 	);
 
-    executeSPARQL(datasources["sparql-query"].query)
+    executeSPARQL(datasources["sparql-query"].endpoint, datasources["sparql-query"].query)
 }
 
 //function for custom query execution, here is still some work to do, refactor analogous to function zoomSPARQL
-function executeSPARQL(query) {
+function executeSPARQL(endpoint, query) {
 	var d = new Date();
 	var timer = d.getTime();
 
 	$('#resultstotal').innerHTML = "Loading...";
 	$.ajax({
-		url: 'http://bureaudigitaalerfgoed.nl/sparql', //QueryString.endpoint || 'http://erfgeo.nl/useekm',
+		url: endpoint,
 		dataType: 'json',
 		data: {
 			//queryLn: 'SPARQL', //Particular to OpenRDF Sesame for as far as I know
@@ -235,4 +237,5 @@ var displayData = function(data) {
 	});
 
 	datasources["sparql-query"].layer.addFeatures(geojson_format.read(geojson));
+    //Icon made by <a href="http://www.unocha.org" title="OCHA">OCHA</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
 };
