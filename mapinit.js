@@ -32,9 +32,9 @@ var datasources = {};
 datasources["sparql-query"] = {
     layer: "", //OpenLayers layer name
     endpoint: QueryString.endpoint || "http://bureaudigitaalerfgoed.nl/sparql",
-    queryElementId: "monuments-sparql-query",
-    JSONResultElementId: "monuments-sparql-results-json-result",
-    GeoJSONResultElementId: "monuments-geojson-result"
+    queryElementId: "sparql-query-text",
+    JSONResultElementId: "sparql-results-json-result",
+    GeoJSONResultElementId: "geojson-result"
 };
 
 if (QueryString.query) { datasources["sparql-query"].query = decodeURIComponent(QueryString.query); }
@@ -44,6 +44,8 @@ function init() {
 	'use strict';
 	$("#tabs").tabs();
 	$("#accordion1").accordion({heightStyle: "content"});
+    $("#" + datasources["sparql-query"].queryElementId).val(datasources["sparql-query"].query);
+
 	var map = new OpenLayers.Map('map', {
 		// Resoluties (pixels per meter) van de zoomniveaus:
 		//resolutions: [6.72, 3.36, 1.68, 0.84, 0.42, 0.21],
@@ -139,10 +141,12 @@ function init() {
         ),
         15
 	);
+
+    executeSPARQL(datasources["sparql-query"].query)
 }
 
 //function for custom query execution, here is still some work to do, refactor analogous to function zoomSPARQL
-(function executeSPARQL(query) {
+function executeSPARQL(query) {
 	var d = new Date();
 	var timer = d.getTime();
 
@@ -152,7 +156,7 @@ function init() {
 		dataType: 'json',
 		data: {
 			//queryLn: 'SPARQL', //Particular to OpenRDF Sesame for as far as I know
-			query: datasources["sparql-query"].query,
+			query: query,
             //limit: $('#limit').val(), //this is not working at the moment
 			//infer: 'false', //Particular to OpenRDF Sesame for as far as I know
 			Accept: 'application/sparql-results+json'
@@ -160,13 +164,14 @@ function init() {
 		success: function(response) {
 			d = new Date();
 			console.log((d.getTime() - timer)/1000 + " seconds for result set to return");
-            console.log("response: ")
+            console.log("response: ");
             console.log(response);
+            //window.history.pushState({URL: window.location + query});
 			displayData(response);
 		},
 		error: displayError()
 	});
-})();
+}
 
 function displayError(xhr, textStatus, errorThrown) {
 	console.log("Error status: " + textStatus);
