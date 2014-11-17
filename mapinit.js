@@ -1,6 +1,7 @@
 /*jshint es3: false, maxerr: 10000, jquery: true*/
 var feature;
-// QueryString IIFS function assignes parameters to QueryString var
+
+// QueryString IIFE function assignes parameters to QueryString var
 // Thanks to http://stackoverflow.com/questions/979975/how-to-get-the-value-from-url-parameter
 // http://stackoverflow.com/users/19068/quentin
 var QueryString = function () {
@@ -22,9 +23,22 @@ var QueryString = function () {
 			query_string[pair[0]].push(pair[1]);
 		}
 	}
-	console.log(QueryString);
+	console.log("QueryString: " + QueryString);
 	return query_string;
 }();
+
+//Global config object for GeoJSON vector layer - sparql query data set
+var datasources = {};
+datasources["sparql-query"] = {
+    layer: "", //OpenLayers layer name
+    endpoint: QueryString.endpoint || "http://bureaudigitaalerfgoed.nl/sparql",
+    queryElementId: "monuments-sparql-query",
+    JSONResultElementId: "monuments-sparql-results-json-result",
+    GeoJSONResultElementId: "monuments-geojson-result"
+};
+
+if (QueryString.query) { datasources["sparql-query"].query = decodeURIComponent(QueryString.query); }
+else { datasources["sparql-query"].query = "SELECT DISTINCT * WHERE { ?Subject <http://www.opengis.net/ont/geosparql#asWKT> ?wkt } LIMIT 5000"; }
 
 function init() {
 	'use strict';
@@ -59,18 +73,6 @@ function init() {
 
 	//OpenStreetMap base layer
 	var osm = new OpenLayers.Layer.OSM("Simple OSM Map");
-
-    var datasources = {};
-
-	//Config object for GeoJSON vector layer - sparql query data set
-	datasources["sparql-query"] = {
-		layer: "", //OpenLayers layer name
-		query: "", //Query
-		endpoint: "http://erfgeo.nl/useekm",
-		queryElementId: "monuments-sparql-query",
-		JSONResultElementId: "monuments-sparql-results-json-result",
-		GeoJSONResultElementId: "monuments-geojson-result"
-	};
 
 	var vector_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
 	vector_style.strokeWidth = 3;
@@ -131,49 +133,51 @@ function init() {
 	ctlLayerSwitcher.maximizeControl();
 
 	map.setCenter(
-		new OpenLayers.LonLat(4.635, 52.38).transform(
-		new OpenLayers.Projection("EPSG:4326"),
-		map.getProjectionObject()
-		),
-	  15
+        new OpenLayers.LonLat(4.635, 52.38).transform(
+            new OpenLayers.Projection("EPSG:4326"),
+            map.getProjectionObject()
+        ),
+        15
 	);
 }
 
 //function for custom query execution, here is still some work to do, refactor analogous to function zoomSPARQL
-function executeSPARQL(query) {
+(function executeSPARQL(query) {
 	var d = new Date();
 	var timer = d.getTime();
 
 	$('#resultstotal').innerHTML = "Loading...";
 	$.ajax({
-		url: 'http://erfgeo.nl/useekm',
+		url: 'http://bureaudigitaalerfgoed.nl/sparql', //QueryString.endpoint || 'http://erfgeo.nl/useekm',
 		dataType: 'json',
 		data: {
-			queryLn: 'SPARQL',
-			query: query,
-			limit: $('#limit').val(), //this is not working at the moment
-			infer: 'false',
+			//queryLn: 'SPARQL', //Particular to OpenRDF Sesame for as far as I know
+			query: datasources["sparql-query"].query,
+            //limit: $('#limit').val(), //this is not working at the moment
+			//infer: 'false', //Particular to OpenRDF Sesame for as far as I know
 			Accept: 'application/sparql-results+json'
 		},
 		success: function(response) {
 			d = new Date();
 			console.log((d.getTime() - timer)/1000 + " seconds for result set to return");
-			displayData(response, datasources["sparql-query"]);
+            console.log("response: ")
+            console.log(response);
+			displayData(response);
 		},
-		error: displayError
+		error: displayError()
 	});
-}
+})();
 
 function displayError(xhr, textStatus, errorThrown) {
-	alert(textStatus);
-	alert(errorThrown);
+	console.log("Error status: " + textStatus);
+	console.log("Error description: " + errorThrown + "\r\n" + xhr);
 }
 
 //Fill Html table with sparql results
-var displayData = function(data, source) {
+var displayData = function(data) {
 	var geometries = [];
 	var geojson = {};
-	var resulttable = document.getElementById(source.JSONResultElementId);
+	var resulttable = document.getElementById(datasources["sparql-query"].JSONResultElementId);
 
 	//empty result table rows, somehow this is the only sure method known to me
 	while (resulttable.rows.length > 0) { resulttable.deleteRow(0); }
@@ -209,7 +213,7 @@ var displayData = function(data, source) {
 				row.append("<td>" + bs[varname].value + "</td>");
 			}
 		});
-		$("#monuments-table-result tbody").after(row);
+		$("#sparql-table-result tbody").after(row);
 	});
 
 	document.getElementById('resultstotal').innerHTML = geometries.length + " results on current map viewport";
@@ -217,13 +221,13 @@ var displayData = function(data, source) {
 	//supplied by sparql-geojson on https://github.com/erfgoed-en-locatie/sparql-geojson
 	geojson = sparqlToGeoJSON(data);
 
-	$('#' + source.GeoJSONResultElementId).val(JSON.stringify(geojson));
-	$('#' + source.JSONResultElementId).val(JSON.stringify(data));
-	source.layer.destroyFeatures();
+	//$('#' + source.GeoJSONResultElementId).val(JSON.stringify(geojson));
+	//$('#' + source.JSONResultElementId).val(JSON.stringify(data));
+	datasources["sparql-query"].layer.destroyFeatures();
 	var geojson_format = new OpenLayers.Format.GeoJSON({
 		internalProjection: new OpenLayers.Projection("EPSG:3857"),
 		externalProjection: new OpenLayers.Projection("EPSG:4326")
 	});
 
-	source.layer.addFeatures(geojson_format.read(geojson));
+	datasources["sparql-query"].layer.addFeatures(geojson_format.read(geojson));
 };
