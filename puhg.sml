@@ -38,7 +38,7 @@ Create View hbo_kron_structures As
             ogcgs:asWKT ?geometry .
     }
     With
-        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, '/', ?id))
+        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?type_genormaliseerd, '/', ?id))
         ?type = uri(?URI)
         ?structuurtype = plainLiteral(?type_genormaliseerd)
         ?project = plainLiteral(?project)
