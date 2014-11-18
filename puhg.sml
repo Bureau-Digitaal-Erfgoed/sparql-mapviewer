@@ -74,4 +74,4 @@ Create View hbo_projects As
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
     From
-        [[SELECT "projectlocaties".*, ST_AsText(ST_transform("projectlocaties".geometry, 4326)) As wktgeom FROM "projectlocaties";]]
+        [[SELECT hbo_projecten.*, ST_AsText(ST_transform(hbo_projecten.the_geom, 4326)) As wktgeom FROM hbo_projecten;]]
