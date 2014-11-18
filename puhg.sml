@@ -46,7 +46,7 @@ Create View hbo_kron_structures As
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
         ?source = plainLiteral(?bron)
     From
-        [[SELECT "hbo_kron_structuren".*, ST_AsText(ST_transform("hbo_kron_structuren".geometry, 4326)) As geometry FROM "hbo_kron_structuren";]]
+        [[SELECT "hbo_kron_structuren".*, ST_AsText(ST_transform("hbo_kron_structuren".the_geom, 4326)) As geometry FROM "hbo_kron_structuren";]]
 
 Create View cadastral_parcels As
     Construct {
