@@ -44,7 +44,7 @@ Create View hbo_kron_structures As
         ?project = plainLiteral(?project)
         ?identifier = plainLiteral(concat(?project, ?structuurnaam))
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
-        ?source = plainLiteral(?source)
+        ?source = plainLiteral(?bron)
     From
         [[SELECT "hbo_kron_structuren".*, ST_AsText(ST_transform(geometry, 4326)) As geometry FROM "hbo_kron_structuren";]]
 
