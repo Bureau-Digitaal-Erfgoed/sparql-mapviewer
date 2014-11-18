@@ -23,7 +23,7 @@ Create View microstation_structures As
         ?identifier = plainLiteral(concat(?project, ?text))
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
     From
-        [[SELECT "microstation_putten".*, ST_AsText(ST_transform(the_geom, 4326)) As geometry FROM "microstation_putten";]]
+        [[SELECT "microstation_putten".*, ST_AsText(ST_transform("microstation_putten".the_geom, 4326)) As geometry FROM "microstation_putten";]]
 
 Create View hbo_kron_structures As
     Construct {
@@ -46,7 +46,7 @@ Create View hbo_kron_structures As
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
         ?source = plainLiteral(?bron)
     From
-        [[SELECT "hbo_kron_structuren".*, ST_AsText(ST_transform(geometry, 4326)) As geometry FROM "hbo_kron_structuren";]]
+        [[SELECT "hbo_kron_structuren".*, ST_AsText(ST_transform("hbo_kron_structuren".geometry, 4326)) As geometry FROM "hbo_kron_structuren";]]
 
 Create View cadastral_parcels As
     Construct {
@@ -74,4 +74,4 @@ Create View hbo_projects As
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
     From
-        [[SELECT "projectlocaties".*, ST_AsText(ST_transform(geometry, 4326)) As wktgeom FROM "projectlocaties";]]
+        [[SELECT "projectlocaties".*, ST_AsText(ST_transform("projectlocaties".geometry, 4326)) As wktgeom FROM "projectlocaties";]]
