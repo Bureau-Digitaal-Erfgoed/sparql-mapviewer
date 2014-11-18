@@ -8,7 +8,7 @@ Create View microstation_structures As
         ?pit a ?type ;
             a ogcgs:Feature, ?type;
             dcterms:subject ?structuurtype ;
-            dcterms:creator "Roos van Oosten", "Rein van 't Veer" ;
+            dcterms:creator "Roos van Oosten", "Rein van t Veer" ;
             dcterms:source "Team Archeologie Haarlem", "Microstation-bestand" ;
             dcterms:isPartOf ?project ;
             dcterms:identifier ?identifier ;
