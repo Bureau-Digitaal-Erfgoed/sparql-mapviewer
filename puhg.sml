@@ -6,7 +6,7 @@ Prefix ogcgs:<http://www.opengis.net/ont/geosparql#>
 Create View microstation_structures As
     Construct {
         ?pit a ?type ;
-            a ogcgs:Feature, ?type;
+            a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
             dcterms:subject ?structuurtype ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer" ;
             dcterms:source "Team Archeologie Haarlem", "Microstation-bestand" ;
@@ -15,7 +15,7 @@ Create View microstation_structures As
             ogcgs:asWKT ?geometry .
     }
     With
-        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, ?gid))
+        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, '/', ?gid))
         ?type = uri(?URI)
         ?structuurtype = plainLiteral(?structuurtype)
         ?project = plainLiteral(?project)
