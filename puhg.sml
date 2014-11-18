@@ -3,21 +3,26 @@ Prefix dcterms:<http://purl.org/dc/terms/>
 Prefix dbpedia:<http://dbpedia.org/resource/>
 Prefix ogcgs:<http://www.opengis.net/ont/geosparql#>
 
-Create View microstation_cesspits As
+Create View microstation_structures As
     Construct {
         ?pit a ?type ;
-            a ogcgs:Feature ;
-            a <http://data.bureaudigitaalerfgoed.nl/def/Cesspit>;
+            a ogcgs:Feature, ?type;
             dcterms:subject ?structuurtype ;
+            dcterms:creator "Roos van Oosten", "Rein van 't Veer" ;
+            dcterms:source "Team Archeologie Haarlem", "Microstation-bestand" ;
+            dcterms:isPartOf ?project ;
+            dcterms:identifier ?identifier ;
             ogcgs:asWKT ?geometry .
     }
     With
-        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/cesspit/', ?gid))
+        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, ?gid))
         ?type = uri(?URI)
         ?structuurtype = plainLiteral(?structuurtype)
+        ?project = plainLiteral(?project)
+        ?identifier = plainLiteral(concat(?project, ?text))
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
     From
-        [[SELECT "Haarlem_putten".*, ST_AsText(ST_transform(the_geom, 4326)) As geometry FROM "Haarlem_putten" WHERE "Haarlem_putten".structuurtype='Beerput';]]
+        [[SELECT "Haarlem_putten".*, ST_AsText(ST_transform(the_geom, 4326)) As geometry FROM "Haarlem_putten";]]
 
 Create View cadastral_parcels As
     Construct {
