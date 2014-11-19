@@ -96,7 +96,7 @@ Create View microstation_projects As
     }
     With
         ?id = ?gid
-        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?id))
+        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?gid))
         ?created = typedLiteral('2014-11-19T17:00:29', xsd:datetime)
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
