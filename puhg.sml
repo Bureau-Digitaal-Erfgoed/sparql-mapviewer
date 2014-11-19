@@ -10,7 +10,6 @@ Create View microstation_structures As
             a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
             rdfs:label ?identifier ;
             dcterms:subject ?structuurtype ;
-            dcterms:created ?created ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer" ;
             dcterms:source "Team Archeologie Haarlem", "Microstation-bestand" ;
             dcterms:isPartOf ?project ;
@@ -21,7 +20,6 @@ Create View microstation_structures As
     With
         ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, '/', ?gid))
         ?type = uri(?URI)
-        ?created = typedLiteral('2014-11-17T16:34:22', xsd:datetime)
         ?structuurtype = plainLiteral(?structuurtype)
         ?project = plainLiteral(?project)
         ?identifier = plainLiteral(concat(?project, ?text))
@@ -56,7 +54,7 @@ Create View hbo_kron_structures As
 Create View cadastral_parcels As
     Construct {
         ?cadastral_parcel a <http://data.bureaudigitaalerfgoed.nl/def/Cadastral_parcel>;
-            rdfs:label 'Kadastraal perceel'@nl ;
+            rdfs:label "Kadastraal perceel" ;
             a ogcgs:Feature;
             ogcgs:asWKT ?geometry .
     }
@@ -84,21 +82,22 @@ Create View hbo_projects As
     From
         [[SELECT hbo_projecten.*, ST_AsText(ST_transform(hbo_projecten.the_geom, 4326)) As wktgeom FROM hbo_projecten;]]
 
+
 Create View microstation_projects As
     Construct {
         ?project a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_project> ;
             a ogcgs:Feature ;
             rdfs:label ?id ;
             dcterms:creator "Rein van t Veer" ;
-            dcterms:created ?created ;
+            #dcterms:created ?created ;
             dcterms:subject ?projectnaam ;
             ogcgs:asWKT ?geometry .
     }
     With
-        ?id = plainLiteral(?gid)
-        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?gid))
-        ?created = typedLiteral('2014-11-19T17:00:29', xsd:datetime)
+        ?id = plainLiteral(?id)
+        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?id))
+        #?created = typedLiteral('2014-11-19T17:00:29', xsd:datetime)
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
     From
-        [[SELECT microstation_projecten.*, ST_AsText(ST_transform(microstation_projecten.the_geom, 4326)) As wktgeom FROM microstation_projecten;]]
+        [[SELECT microstation_projecten.*, ST_AsText(ST_transform(microstation_projecten.the_geom, 4326)) As wktgeom FROM microstation_projecten WHERE microstation_projecten.the_geom is not null;]]
