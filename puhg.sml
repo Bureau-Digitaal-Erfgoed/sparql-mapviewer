@@ -76,7 +76,7 @@ Create View hbo_projects As
             ogcgs:asWKT ?geometry .
     }
     With
-        ?id = ?id
+        ?id = plainLiteral(?id)
         ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?id))
         ?creator = plainLiteral(?creator)
         ?projectnaam = plainLiteral(?project)
@@ -95,7 +95,7 @@ Create View microstation_projects As
             ogcgs:asWKT ?geometry .
     }
     With
-        ?id = ?gid
+        ?id = plainLiteral(?gid)
         ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?gid))
         ?created = typedLiteral('2014-11-19T17:00:29', xsd:datetime)
         ?projectnaam = plainLiteral(?project)
