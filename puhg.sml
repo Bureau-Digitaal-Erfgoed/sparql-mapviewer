@@ -10,7 +10,7 @@ Create View microstation_structures As
             a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
             rdfs:label ?identifier ;
             dcterms:subject ?structuurtype ;
-            dcterms:created ?created
+            dcterms:created ?created ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer" ;
             dcterms:source "Team Archeologie Haarlem", "Microstation-bestand" ;
             dcterms:isPartOf ?project ;
