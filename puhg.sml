@@ -24,7 +24,7 @@ Create View all_structures As
         ?structuurtype = plainLiteral(?structuurtype)
         ?date = plainLiteral(?date)
         ?project = plainLiteral(?projectnaam)
-        ?label = plainLiteral(concat(?project, ", ", ?structuurnaam))
+        ?label = plainLiteral(concat(?projectnaam, ", ", ?structuurnaam))
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
     From
         [[SELECT 
