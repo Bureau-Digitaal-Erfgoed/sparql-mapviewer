@@ -13,7 +13,7 @@ Create View all_structures As
             dcterms:creator "Roos van Oosten", "Rein van t Veer", "Eefke Jacobs" ;
             dcterms:contributor "Team Archeologie Haarlem", "Fenno Noij", "Svenja de Bruin" ;
             dcterms:date ?date ;
-            dcterms:isPartOf ?project, source ;
+            dcterms:isPartOf ?project, ?source ;
             dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
             ogcgs:asWKT ?geometry .
     }
