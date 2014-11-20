@@ -4,52 +4,40 @@ Prefix dbpedia:<http://dbpedia.org/resource/>
 Prefix ogcgs:<http://www.opengis.net/ont/geosparql#>
 Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 
-Create View microstation_structures As
-    Construct {
-        ?pit a ?type ;
-            a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
-            rdfs:label ?identifier ;
-            dcterms:subject ?structuurtype ;
-            dcterms:creator "Roos van Oosten", "Rein van t Veer" ;
-            dcterms:source "Team Archeologie Haarlem", "Microstation-bestand" ;
-            dcterms:isPartOf ?project ;
-            dcterms:identifier ?identifier ;
-            dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
-            ogcgs:asWKT ?geometry .
-    }
-    With
-        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, '/', ?gid))
-        ?type = uri(?URI)
-        ?structuurtype = plainLiteral(?structuurtype)
-        ?project = plainLiteral(?project)
-        ?identifier = plainLiteral(concat(?project, ?text))
-        ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
-    From
-        [[SELECT "microstation_putten".*, ST_AsText(ST_transform("microstation_putten".the_geom, 4326)) As geometry FROM "microstation_putten";]]
-
-Create View hbo_kron_structures As
+Create View all_structures As
     Construct {
         ?pit a ?type ;
             a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
             rdfs:label ?identifier ;
             dcterms:subject ?structuurtype ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer", "Eefke Jacobs" ;
-            dcterms:source ?source ;
-            dcterms:isPartOf ?project ;
-            dcterms:identifier ?identifier ;
+            dcterms:contributor "Team Archeologie Haarlem", "Fenno Noij", "Svenja de Bruin" ;
+            dcterms:date ?date ;
+            dcterms:isPartOf ?project, source ;
             dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
             ogcgs:asWKT ?geometry .
     }
     With
-        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?type_genormaliseerd, '/', ?id))
-        ?type = uri(?URI)
-        ?structuurtype = plainLiteral(?type_genormaliseerd)
-        ?project = plainLiteral(?project)
-        ?identifier = plainLiteral(concat(?project, ?structuurnaam))
-        ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
+        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, '/', ?id))
         ?source = plainLiteral(?bron)
+        ?type = uri(?structuurtypeuri)
+        ?structuurtype = plainLiteral(?structuurtype)
+        ?date = plainLiteral(?date)
+        ?project = plainLiteral(?projectnaam)
+        ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
     From
-        [[SELECT "hbo_kron_structuren".*, ST_AsText(ST_transform("hbo_kron_structuren".the_geom, 4326)) As geometry FROM "hbo_kron_structuren";]]
+        [[SELECT 
+            alle_structuren_view.id, 
+            alle_structuren_view.bron, 
+            alle_structuren_view.nummer, 
+            alle_structuren_view.structuurtype, 
+            alle_structuren_view.structuurtypeuri, 
+            alle_structuren_view.structuurnaam, 
+            alle_structuren_view.date, 
+            alle_structuren_view.creator, 
+            alle_structuren_view.projectnaam, 
+            ST_AsText(ST_transform(alle_structuren_view.the_geom, 4326)) As geometry 
+        FROM alle_structuren_view;]]
 
 Create View cadastral_parcels As
     Construct {
