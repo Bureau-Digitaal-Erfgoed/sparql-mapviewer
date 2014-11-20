@@ -8,7 +8,7 @@ Create View all_structures As
     Construct {
         ?pit a ?type ;
             a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
-            rdfs:label ?identifier ;
+            rdfs:label ?label ;
             dcterms:subject ?structuurtype ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer", "Eefke Jacobs" ;
             dcterms:contributor "Team Archeologie Haarlem", "Fenno Noij", "Svenja de Bruin" ;
@@ -24,6 +24,7 @@ Create View all_structures As
         ?structuurtype = plainLiteral(?structuurtype)
         ?date = plainLiteral(?date)
         ?project = plainLiteral(?projectnaam)
+        ?label = plainLiteral(concat(?project, ", ", ?structuurnaam))
         ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
     From
         [[SELECT 
