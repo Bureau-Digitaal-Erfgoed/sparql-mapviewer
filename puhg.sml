@@ -4,6 +4,39 @@ Prefix dbpedia:<http://dbpedia.org/resource/>
 Prefix ogcgs:<http://www.opengis.net/ont/geosparql#>
 Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 
+Create View all_structure_descriptions AS
+    Construct { 
+        ?structure a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure>, ?type ;
+            <http://data.bureaudigitaalerfgoed.nl/def/Excavated_in> ?excavationyear;
+            dcterms:partOf ?projectcode, ?projectname, ?project_normalized ;
+            dcterms:subject ?structure_as_reported, ?structurenumber_as_reported ;
+            ogcgs:hasGeometry ?structureGeometry ;
+            <http://data.bureaudigitaalerfgoed.nl/def/Secondary_use> ?secondarytype ;
+            dcterms:source ?source ;
+            <http://schema.org/startDate> ?startdate ;
+            <http://schema.org/endDate> ?enddate ;
+            dcterms:spatial ?stad .
+    }
+    With
+        ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure/', ?complex))
+        ?excavationyear = typedLiteral(?Jaar, xsd:gYear)
+        ?projectcode = plainLiteral(?Projectcode)
+        ?projectname = plainLiteral(?Project)
+        ?project_normalized = plainLiteral(?Projectaanduiding_genormaliseerd)
+        ?structureGeometry = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Geometry/', ?Geometrie_koppeling))
+        ?structure_as_reported = plainLiteral(?Oorspronkelijke_benaming_structuur)
+        ?structurenumber_as_reported = plainLiteral(?Structuur_NR)
+        ?primarytype = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/', ?Functie_structuur_primair))
+        ?secundarytype = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/', ?Functie_structuur_secundair))
+        ?source = plainLiteral(?Rapportage)
+        ?startdate = typedLiteral(?DATV, xsd:gYear)
+        ?enddate = typedLiteral(?DATL, xsd:gYear)
+        ?stad = uri(concat('http://dbpedia.org/resource/', ?Stad))
+    From 
+    [[SELECT *
+    FROM alle_structuurbeschrijvingen_view WHERE Functie_structuur_primair != 'nvt';]]
+
+
 Create View all_structure_geometries As
     Construct {
         ?structure a ?type ;
@@ -40,25 +73,6 @@ Create View all_structure_geometries As
             ST_AsText(ST_transform(alle_structuren_view.the_geom, 4326)) As geometry 
         FROM alle_structuren_view;]]
 
-Create View all_structure_descriptions AS
-    Construct { 
-        ?structure a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure> ;
-            ogcgs:hasGeometry ?structureGeometry ;
-            dcterms:source ?source ;
-            <http://schema.org/startDate> ?startdate ;
-            <http://schema.org/endDate> ?enddate ;
-            dcterms:spatial ?stad .
-    }
-    With
-        ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Archaeological_structure/', ?complex))
-        ?structureGeometry = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Geometry/', ?Geometrie_koppeling))
-        ?source = plainLiteral(?Rapportage)
-        ?startdate = typedLiteral(?DATV, xsd:gYear)
-        ?enddate = typedLiteral(?DATL, xsd:gYear)
-        ?stad = uri(concat('http://dbpedia.org/resource/', ?Stad))
-    From 
-    [[SELECT *
-    FROM alle_structuurbeschrijvingen_view;]]
 
 Create View cadastral_parcels As
     Construct {
