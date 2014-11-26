@@ -4,10 +4,10 @@ Prefix dbpedia:<http://dbpedia.org/resource/>
 Prefix ogcgs:<http://www.opengis.net/ont/geosparql#>
 Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 
-Create View all_structures As
+Create View all_structure_geometries As
     Construct {
-        ?pit a ?type ;
-            a ogcgs:Feature, <http://data.bureaudigitaalerfgoed.nl/def/Amenity>, ?type;
+        ?structure a ?type ;
+            a ogcgs:Feature, ?type ;
             rdfs:label ?label ;
             dcterms:subject ?structuurtype ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer", "Eefke Jacobs" ;
@@ -18,7 +18,7 @@ Create View all_structures As
             ogcgs:asWKT ?geometry .
     }
     With
-        ?pit = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/', ?structuurtype, '/', ?id))
+        ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Geometry/', ?id))
         ?source = plainLiteral(?bron)
         ?type = uri(?structuurtypeuri)
         ?structuurtype = plainLiteral(?structuurtype)
@@ -39,6 +39,26 @@ Create View all_structures As
             alle_structuren_view.projectnaam, 
             ST_AsText(ST_transform(alle_structuren_view.the_geom, 4326)) As geometry 
         FROM alle_structuren_view;]]
+
+Create View all_structure_descriptions AS
+    Construct { 
+        ?structure a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure> ;
+            ogcgs:hasGeometry ?structureGeometry ;
+            dcterms:source ?source ;
+            <http://schema.org/startDate> ?startdate ;
+            <http://schema.org/endDate> ?enddate ;
+            dcterms:spatial ?stad .
+    }
+    With
+        ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Archaeological_structure/', ?complex))
+        ?structureGeometry = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Geometry/', ?Geometrie_koppeling))
+        ?source = plainLiteral(?Rapportage)
+        ?startdate = typedLiteral(?DATV, xsd:gYear)
+        ?enddate = typedLiteral(?DATL, xsd:gYear)
+        ?stad = uri(concat('http://dbpedia.org/resource/', ?Stad))
+    From 
+    [[SELECT *
+    FROM alle_structuurbeschrijvingen_view;]]
 
 Create View cadastral_parcels As
     Construct {
