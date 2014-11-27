@@ -6,7 +6,8 @@ Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 
 Create View all_structure_descriptions AS
     Construct { 
-        ?structure a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure>, ?primarytype ;
+        ?structure 
+            a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure>, ?primarytype ;
             <http://data.bureaudigitaalerfgoed.nl/def/Secondary_use> ?secondarytype ;
             <http://data.bureaudigitaalerfgoed.nl/def/Excavated_in_year> ?excavationyear;
             dcterms:partOf ?projectcode, ?projectname, ?project_normalized ;
@@ -39,8 +40,8 @@ Create View all_structure_descriptions AS
 
 Create View all_structure_geometries As
     Construct {
-        ?structure a ?type ;
-            a ogcgs:Feature, ?type ;
+        ?structure 
+            a ogcgs:Feature ;
             rdfs:label ?label ;
             dcterms:subject ?structuurtype ;
             dcterms:creator "Roos van Oosten", "Rein van t Veer", "Eefke Jacobs" ;
