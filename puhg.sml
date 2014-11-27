@@ -6,12 +6,12 @@ Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 
 Create View all_structure_descriptions AS
     Construct { 
-        ?structure a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure>, ?type ;
-            <http://data.bureaudigitaalerfgoed.nl/def/Excavated_in> ?excavationyear;
+        ?structure a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure>, ?primarytype ;
+            <http://data.bureaudigitaalerfgoed.nl/def/Secondary_use> ?secondarytype ;
+            <http://data.bureaudigitaalerfgoed.nl/def/Excavated_in_year> ?excavationyear;
             dcterms:partOf ?projectcode, ?projectname, ?project_normalized ;
             dcterms:subject ?structure_as_reported, ?structurenumber_as_reported ;
             ogcgs:hasGeometry ?structureGeometry ;
-            <http://data.bureaudigitaalerfgoed.nl/def/Secondary_use> ?secondarytype ;
             dcterms:source ?source ;
             <http://schema.org/startDate> ?startdate ;
             <http://schema.org/endDate> ?enddate ;
@@ -19,6 +19,8 @@ Create View all_structure_descriptions AS
     }
     With
         ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure/', ?complex))
+        ?primarytype = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/', ?Functie_structuur_primair))
+        ?secondarytype = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/', ?Functie_structuur_secundair))
         ?excavationyear = typedLiteral(?Jaar, xsd:gYear)
         ?projectcode = plainLiteral(?Projectcode)
         ?projectname = plainLiteral(?Project)
@@ -26,15 +28,13 @@ Create View all_structure_descriptions AS
         ?structureGeometry = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/Geometry/', ?Geometrie_koppeling))
         ?structure_as_reported = plainLiteral(?Oorspronkelijke_benaming_structuur)
         ?structurenumber_as_reported = plainLiteral(?Structuur_NR)
-        ?primarytype = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/', ?Functie_structuur_primair))
-        ?secundarytype = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/', ?Functie_structuur_secundair))
         ?source = plainLiteral(?Rapportage)
         ?startdate = typedLiteral(?DATV, xsd:gYear)
         ?enddate = typedLiteral(?DATL, xsd:gYear)
         ?stad = uri(concat('http://dbpedia.org/resource/', ?Stad))
     From 
     [[SELECT *
-    FROM alle_structuurbeschrijvingen_view WHERE Functie_structuur_primair != 'nvt';]]
+    FROM alle_structuurbeschrijvingen_view WHERE "Functie_structuur_primair" != 'nvt';]]
 
 
 Create View all_structure_geometries As
