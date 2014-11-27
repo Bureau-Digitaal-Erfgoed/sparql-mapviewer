@@ -3,6 +3,22 @@ Prefix dcterms:<http://purl.org/dc/terms/>
 Prefix dbpedia:<http://dbpedia.org/resource/>
 Prefix ogcgs:<http://www.opengis.net/ont/geosparql#>
 Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix skos: <http://www.w3.org/2004/02/skos/core#>
+
+Create View cesspit_foundation_defs AS
+    Construct {
+        ?definition a skos:Concept ;
+            skos:prefLabel ?description ;
+            skos:altLabel ?alias, ?typedesignation .
+    }
+    With
+        ?definition = uri(?URI)
+        ?description = plainLiteral(?Omschrijving)
+        ?alias = plainLiteral(?Alias)
+        ?typedesignation = plainLiteral(?Type_aanduiding)
+    From
+        [[SELECT * FROM typologie_beerputonderkant;]]
+            
 
 Create View all_structure_descriptions AS
     Construct { 
@@ -34,8 +50,7 @@ Create View all_structure_descriptions AS
         ?enddate = typedLiteral(?DATL, xsd:gYear)
         ?stad = uri(concat('http://dbpedia.org/resource/', ?Stad))
     From 
-    [[SELECT *
-    FROM alle_structuurbeschrijvingen_view WHERE "Functie_structuur_primair" != 'nvt';]]
+        [[SELECT * FROM alle_structuurbeschrijvingen_view WHERE "Functie_structuur_primair" != 'nvt';]]
 
 
 Create View all_structure_geometries As
