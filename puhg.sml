@@ -111,22 +111,29 @@ Create View all_structure_descriptions AS
         ?date = plainLiteral(?date)
         ?geometrySource = plainLiteral(?bron)
         ?creator = plainLiteral(?creator)
-        ?geometry = typedliteral(?the_geom, ogcgs:wktLiteral)
+        ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
     From 
-        [[SELECT * FROM alle_structuurbeschrijvingen_view WHERE "Functie_structuur_primair" != 'nvt';]]
+        [[SELECT * FROM alle_structuurbeschrijvingen_view WHERE alle_structuurbeschrijvingen_view."Functie_structuur_primair" != 'nvt';]]
 
 Create View cadastral_parcels As
     Construct {
-        ?cadastral_parcel a <http://data.bureaudigitaalerfgoed.nl/def/Cadastral_parcel>;
-            rdfs:label "Kadastraal perceel" ;
+        ?cadastral_parcel 
+            a <http://data.bureaudigitaalerfgoed.nl/def/Cadastral_parcel>;
             a ogcgs:Feature;
+            rdfs:label "Kadastraal perceel" ;
+            bdedef:Wealth ?wealth ;
+            dcterms:creator "Rein van t Veer" ;
+            dcterms:created ?created ;
+            dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
             ogcgs:asWKT ?geometry .
     }
     With
         ?cadastral_parcel = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/cadastral_parcel_1832/', ?id))
-        ?geometry = typedliteral(?geometry, ogcgs:wktLiteral)
+        ?wealth = plainLiteral(?welstand)
+        ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
+        ?created = plainLiteral(?timestamp)
     From
-        [[SELECT "kadastrale_percelen_1832".*, ST_AsText(ST_transform(the_geom, 4326)) As geometry FROM "kadastrale_percelen_1832";]]
+        [[SELECT "percelen_1832_sociale_differentiatie_1629_view".*, ST_AsText(ST_transform(the_geom, 4326)) As wktgeom FROM "percelen_1832_sociale_differentiatie_1629_view";]]
        
 Create View hbo_projects As
     Construct {
@@ -134,12 +141,13 @@ Create View hbo_projects As
             a ogcgs:Feature ;
             rdfs:label ?id ;
             dcterms:creator ?creator ;
+            dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
             dcterms:subject ?projectnaam ;
             ogcgs:asWKT ?geometry .
     }
     With
         ?id = plainLiteral(?id)
-        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?id))
+        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/hbo/', ?id))
         ?creator = plainLiteral(?creator)
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
@@ -152,16 +160,34 @@ Create View microstation_projects As
         ?project a <http://data.bureaudigitaalerfgoed.nl/def/Archaeological_project> ;
             a ogcgs:Feature ;
             rdfs:label ?id ;
-            dcterms:creator "Rein van t Veer" ;
+            dcterms:creator "Rein van t Veer", "Team Archeologie Haarlem" ;
             #dcterms:created ?created ;
             dcterms:subject ?projectnaam ;
+            dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
             ogcgs:asWKT ?geometry .
     }
     With
         ?id = plainLiteral(?id)
-        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/', ?id))
+        ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/microstation/', ?id))
         #?created = typedLiteral('2014-11-19T17:00:29', xsd:datetime)
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
     From
         [[SELECT microstation_projecten.*, ST_AsText(ST_transform(microstation_projecten.the_geom, 4326)) As wktgeom FROM microstation_projecten WHERE microstation_projecten.the_geom is not null;]]
+
+Create View neighborhoods As
+    Construct {
+        ?neighborhood 
+            a dbpedia:Neighborhood ;
+            rdfs:label ?label ;
+            dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
+            dcterms:creator "Rein van t Veer";
+            ogcgs:asWKT ?geometry .
+    }
+    With
+        ?neighborhood = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/buurt/', ?id))
+        ?label = plainLiteral(concat('Wijk ', ?wijknaam))
+        ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
+    From
+        [[SELECT haarlem_wijk.*, ST_AsText(ST_transform(haarlem_wijk.the_geom, 4326)) As wktgeom from haarlem_wijk;]]
+        
