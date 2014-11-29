@@ -73,6 +73,8 @@ Create View all_structure_descriptions AS
             bdedef:Smallest_brick_size ?smallestBrickSize ;
             bdedef:Largest_brick_size ?largestBrickSize ;
             dbpedia:Depth_in_a_well ?depth ;
+            bdedef:Wealth ?wealth ;
+            ogcgs:sfWithin ?parcel ;
             ogcgs:hasGeometry ?structureGeometry .
         ?structureGeometry 
             a ogcgs:Feature ;
@@ -82,7 +84,7 @@ Create View all_structure_descriptions AS
             ogcgs:asWKT ?geometry .
     }
     With
-        ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/def/Archaeological_structure/', ?complex))
+        ?structure = uri(concat('http://data.bureaudigitaalerfgoed.nl/Archaeological_structure/', ?complex))
         ?structuretype = uri(?structuurtype_uri)
         ?secondarytype = uri(?structuurtype_secundair_uri)
         ?city = uri(concat('http://dbpedia.org/resource/', ?Stad))
@@ -111,6 +113,8 @@ Create View all_structure_descriptions AS
         ?date = plainLiteral(?date)
         ?geometrySource = plainLiteral(?bron)
         ?creator = plainLiteral(?creator)
+        ?wealth = plainLiteral(?welstand)
+        ?parcel = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/cadastral_parcel_1832/', ?perceel_id))
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
     From 
         [[SELECT * FROM alle_structuurbeschrijvingen_view WHERE alle_structuurbeschrijvingen_view."Functie_structuur_primair" != 'nvt';]]
@@ -146,8 +150,8 @@ Create View hbo_projects As
             ogcgs:asWKT ?geometry .
     }
     With
-        ?id = plainLiteral(?id)
         ?project = uri(concat('http://data.bureaudigitaalerfgoed.nl/puhg/project/hbo/', ?id))
+        ?id = plainLiteral(?id)
         ?creator = plainLiteral(?creator)
         ?projectnaam = plainLiteral(?project)
         ?geometry = typedliteral(?wktgeom, ogcgs:wktLiteral)
