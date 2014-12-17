@@ -32,7 +32,7 @@ Create View pit_defs AS
     Construct {
         ?definition a skos:Concept ;
             skos:prefLabel ?description ;
-            skos:altLabel ?alias;
+            skos:altLabel ?alias ;
             dcterms:creator ?creator ;
             dcterms:created ?created ;
             dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> .
@@ -55,7 +55,7 @@ Create View all_structure_descriptions AS
             dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
             <http://data.bureaudigitaalerfgoed.nl/def/Primary_use> ?structuretype ;
             <http://data.bureaudigitaalerfgoed.nl/def/Secondary_use> ?secondarytype ;
-            <http://data.bureaudigitaalerfgoed.nl/def/Excavated_in_year> ?excavationyear;
+            <http://data.bureaudigitaalerfgoed.nl/def/Excavated_in_year> ?excavationyear ;
             dcterms:spatial ?city, ?projectname ;
             dcterms:partOf ?projectcode, ?projectNormalized ;
             dcterms:subject ?structureAsReported, ?structureNumberAsReported, ?structureNameAsReported ;
@@ -122,8 +122,8 @@ Create View all_structure_descriptions AS
 Create View cadastral_parcels As
     Construct {
         ?cadastral_parcel 
-            a <http://data.bureaudigitaalerfgoed.nl/def/Cadastral_parcel>;
-            a ogcgs:Feature;
+            a <http://data.bureaudigitaalerfgoed.nl/def/Cadastral_parcel> ;
+            a ogcgs:Feature ;
             rdfs:label "Kadastraal perceel" ;
             bdedef:Wealth ?wealth ;
             dcterms:creator "Rein van t Veer" ;
@@ -185,7 +185,7 @@ Create View neighborhoods As
             a dbpedia:Neighborhood ;
             rdfs:label ?label ;
             dcterms:rights <https://creativecommons.org/licenses/by-sa/3.0/> ;
-            dcterms:creator "Rein van t Veer";
+            dcterms:creator "Rein van t Veer" ;
             ogcgs:asWKT ?geometry .
     }
     With
