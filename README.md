@@ -2,7 +2,7 @@ Sparql-Mapviewer by Bureau Digitaal Erfgoed
 =====================
 Simple web mapping application for visualising well-known text encoded geometries from sparql endpoints. Although it has default queries as standard, it accepts a different sparql endpoint, and a different query as input parameter in the URL. It was created in the 2014 for the purposes of the "Putten uit de Haarlemse Geschiedenis" [PUHG](http://bureaudigitaalerfgoed.nl/puhg) project,for the visualization of cess pits and water wells of archaeological Haarlem. The application is based on (forked from) the Erfgoed & Locatie Archeo-Peilbuizen proof of concept, in the 2013-2014 season of the Platform Implementation Linked Open Data [PiLOD](http://www.pilod.nl)
     
-    Copyright (C) 2013-2014  Rein van 't Veer, Digitaal Erfgoed Nederland
+    Copyright (C) 2013-2014  Rein van 't Veer, Bureau Digitaal Erfgoed
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
