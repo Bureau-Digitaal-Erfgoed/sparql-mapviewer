@@ -16,3 +16,7 @@ Simple web mapping application for visualising well-known text encoded geometrie
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Installation
+-----------
+Simply clone with git or unpack the zipfile contents to a folder served by your web server
