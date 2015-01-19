@@ -19,4 +19,4 @@ Simple web mapping application for visualising well-known text encoded geometrie
 
 Installation
 -----------
-Simply clone with git or unpack the zipfile contents to a folder served by your web server
+Simply clone with git or unpack the zipfile contents to a folder served by your web server. It will also run in your browser simply by opening the index.html file.
